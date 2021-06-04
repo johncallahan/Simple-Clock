@@ -8,8 +8,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.*
 import android.os.Bundle
-import android.util.Log
-import android.view.View
 import android.widget.RemoteViews
 import com.simplemobiletools.clock.R
 import com.simplemobiletools.clock.activities.SplashActivity
@@ -18,8 +16,7 @@ import com.simplemobiletools.commons.extensions.*
 import com.simplemobiletools.commons.helpers.isOreoPlus
 import java.util.*
 
-
-class MyWidgetDateTimeProvider : AppWidgetProvider() {
+class OldMyWidgetDateTimeProvider : AppWidgetProvider() {
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
@@ -65,9 +62,6 @@ class MyWidgetDateTimeProvider : AppWidgetProvider() {
             setText(R.id.widget_time, timeText)
             setText(R.id.widget_date, context.getFormattedDate(Calendar.getInstance()))
             setText(R.id.widget_next_alarm, nextAlarm)
-            setVisibleIf(R.id.clockHolder, true)
-            setVisibleIf(R.id.widget_time, false)
-            setVisibleIf(R.id.widget_date, false)
             setVisibleIf(R.id.widget_alarm_holder, nextAlarm.isNotEmpty())
         }
     }
@@ -82,21 +76,11 @@ class MyWidgetDateTimeProvider : AppWidgetProvider() {
             setTextColor(R.id.widget_date, widgetTextColor)
             setTextColor(R.id.widget_next_alarm, widgetTextColor)
 
-            val v: View = Clock(context)
-            val otherBitmap = Bitmap.createBitmap(500 /*width*/, 500 /*height*/, Bitmap.Config.ARGB_8888)
-            val canvas = Canvas(otherBitmap)
-            v.draw(canvas)
-
-            Log.i("HELLO", "WORLD")
             if (context.config.useTextShadow) {
                 val bitmap = getMultiplyColoredBitmap(R.drawable.ic_clock_shadowed, widgetTextColor, context)
-                //val otherBitmap = getMultiplyColoredBitmap(R.drawable.ic_timer, widgetTextColor, context)
                 setImageViewBitmap(R.id.widget_next_alarm_image, bitmap)
-                setImageViewBitmap(R.id.clockHolder, otherBitmap)
             } else {
                 setImageViewBitmap(R.id.widget_next_alarm_image, context.resources.getColoredBitmap(R.drawable.ic_alarm_vector, widgetTextColor))
-                //setImageViewBitmap(R.id.clockHolder, context.resources.getColoredBitmap(R.drawable.circle_background_filled, widgetTextColor))
-                setImageViewBitmap(R.id.clockHolder, otherBitmap)
             }
         }
     }

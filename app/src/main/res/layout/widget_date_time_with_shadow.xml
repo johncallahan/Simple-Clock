@@ -24,6 +24,15 @@
         android:paddingBottom="@dimen/small_margin"
         tools:ignore="UnusedAttribute">
 
+        <ImageView
+            android:id="@+id/clockHolder"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:scaleType="fitXY"
+            android:src="@drawable/circle_background_filled" />
+
         <TextView
             android:id="@+id/widget_time"
             android:layout_width="match_parent"
