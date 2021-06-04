@@ -23,6 +23,7 @@
     <string name="stopwatch_tab">Stopwatch tab</string>
     <string name="timer_tab">Timer tab</string>
     <string name="show_seconds">Show seconds</string>
+    <string name="show_analog_clock">Show analog clock</string>
     <string name="increase_volume_gradually">Increase volume gradually</string>
 
     <!-- FAQ -->

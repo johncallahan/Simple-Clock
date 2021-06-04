@@ -59,15 +59,16 @@ class MyWidgetDateTimeProvider : AppWidgetProvider() {
     }
 
     private fun updateTexts(context: Context, views: RemoteViews) {
+        val config = context.config
         val timeText = context.getFormattedTime(getPassedSeconds(), false, false).toString()
         val nextAlarm = getFormattedNextAlarm(context)
         views.apply {
             setText(R.id.widget_time, timeText)
             setText(R.id.widget_date, context.getFormattedDate(Calendar.getInstance()))
             setText(R.id.widget_next_alarm, nextAlarm)
-            setVisibleIf(R.id.clockHolder, true)
-            setVisibleIf(R.id.widget_time, false)
-            setVisibleIf(R.id.widget_date, false)
+            setVisibleIf(R.id.clockHolder, config.showAnalog)
+            setVisibleIf(R.id.widget_time, !config.showAnalog)
+            setVisibleIf(R.id.widget_date, !config.showAnalog)
             setVisibleIf(R.id.widget_alarm_holder, nextAlarm.isNotEmpty())
         }
     }
@@ -87,7 +88,6 @@ class MyWidgetDateTimeProvider : AppWidgetProvider() {
             val canvas = Canvas(otherBitmap)
             v.draw(canvas)
 
-            Log.i("HELLO", "WORLD")
             if (context.config.useTextShadow) {
                 val bitmap = getMultiplyColoredBitmap(R.drawable.ic_clock_shadowed, widgetTextColor, context)
                 //val otherBitmap = getMultiplyColoredBitmap(R.drawable.ic_timer, widgetTextColor, context)

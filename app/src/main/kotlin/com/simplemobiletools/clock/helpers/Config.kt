@@ -19,6 +19,10 @@ class Config(context: Context) : BaseConfig(context) {
         get() = prefs.getBoolean(SHOW_SECONDS, true)
         set(showSeconds) = prefs.edit().putBoolean(SHOW_SECONDS, showSeconds).apply()
 
+    var showAnalog: Boolean
+        get() = prefs.getBoolean(SHOW_ANALOG, false)
+        set(showAnalog) = prefs.edit().putBoolean(SHOW_ANALOG, showAnalog).apply()
+
     var selectedTimeZones: Set<String>
         get() = prefs.getStringSet(SELECTED_TIME_ZONES, HashSet())!!
         set(selectedTimeZones) = prefs.edit().putStringSet(SELECTED_TIME_ZONES, selectedTimeZones).apply()

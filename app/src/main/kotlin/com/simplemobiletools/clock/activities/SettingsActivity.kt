@@ -36,6 +36,7 @@ class SettingsActivity : SimpleActivity() {
         setupTimerMaxReminder()
         setupIncreaseVolumeGradually()
         setupUseTextShadow()
+        setupAnalogClock()
         setupCustomizeWidgetColors()
         updateTextColors(settings_holder)
         setupSectionColors()
@@ -180,6 +181,15 @@ class SettingsActivity : SimpleActivity() {
 
     private fun updateTimerMaxReminderText() {
         settings_timer_max_reminder.text = formatSecondsToTimeString(config.timerMaxReminderSecs)
+    }
+
+    private fun setupAnalogClock() {
+        settings_analog_format.isChecked = config.showAnalog
+        settings_analog_format_holder.setOnClickListener {
+            settings_analog_format.toggle()
+            config.showAnalog = settings_analog_format.isChecked
+            updateWidgets()
+        }
     }
 
     private fun setupCustomizeWidgetColors() {
