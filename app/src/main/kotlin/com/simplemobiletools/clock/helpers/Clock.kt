@@ -4,10 +4,9 @@ import android.content.Context
 import android.graphics.*
 import android.util.Log
 import android.view.View
-import androidx.core.content.res.ResourcesCompat
-import com.simplemobiletools.clock.extensions.config
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.util.*
 import kotlin.math.absoluteValue
 import kotlin.math.pow
@@ -29,7 +28,7 @@ class Clock(context: Context?) : View(context) {
         super.onDraw(canvas)
 
         val mCalendar = Calendar.getInstance()
-        RADIUS = Math.min(WIDTH,HEIGHT) / 2
+        RADIUS = Math.min(WIDTH, HEIGHT) / 2
 
         var hourDotColor = Color.RED
         var minuteDotColor = Color.WHITE
@@ -54,6 +53,9 @@ class Clock(context: Context?) : View(context) {
         var xHandLocation: Int = 0
         var yHandLocation: Int = 0
 
+        var xHandHourNYC: Int = 0
+        var yHandHourNYC: Int = 0
+
         var xHandHourLHR: Int = 0
         var yHandHourLHR: Int = 0
 
@@ -63,18 +65,31 @@ class Clock(context: Context?) : View(context) {
         var xHandHourSIN: Int = 0
         var yHandHourSIN: Int = 0
 
+        var xHandHourHNL: Int = 0
+        var yHandHourHNL: Int = 0
+
+        var xHandHourIST: Int = 0
+        var yHandHourIST: Int = 0
+
+        var xHandHourCDG: Int = 0
+        var yHandHourCDG: Int = 0
+
+        var xHandHourNRT: Int = 0
+        var yHandHourNRT: Int = 0
+
+        var xHandHourSYD: Int = 0
+        var yHandHourSYD: Int = 0
+
         /** The size of the clock.  */
         //WIDTH = if(this.measuredWidth == 0) 400 else this.measuredWidth
         //HEIGHT = if(this.measuredHeight == 0) 400 else this.measuredHeight
 
-        Log.i("WIDTH = ", WIDTH.toString())
-        Log.i("HEIGHT = ", HEIGHT.toString())
 
         /** The length of the clock hands relative to the clock size.  */
         val secondHandLength = WIDTH / 2 - 30
         val minuteHandLength = WIDTH / 2 - 100
         val hourHandLength = WIDTH / 2 - 130
-        val locationHandLength = WIDTH / 2 - 110
+        val locationHandLength = WIDTH / 2 - 95
 
         /** The distance of the dots from the origin (center of the clock).  */
         //private val DISTANCE_DOT_FROM_ORIGIN = WIDTH / 2 - 30
@@ -92,6 +107,35 @@ class Clock(context: Context?) : View(context) {
         val currentHour = LocalDateTime.now().hour
         val relativeHour = getRelativeHour(currentMinute)
 
+        val nycTimeZone = ZoneId.of("America/New_York")
+        val lhrTimeZone = ZoneId.of("Europe/London")
+        val cdgTimeZone = ZoneId.of("Europe/Paris")
+        val istTimeZone = ZoneId.of("Europe/Istanbul")
+        val sfoTimeZone = ZoneId.of("America/Los_Angeles")
+        val hnlTimeZone = ZoneId.of("Pacific/Honolulu")
+        val sinTimeZone = ZoneId.of("Asia/Singapore")
+        val nrtTimeZone = ZoneId.of("Asia/Tokyo")
+        val sydTimeZone = ZoneId.of("Australia/Sydney")
+
+        val nycTime = ZonedDateTime.now(nycTimeZone)
+        val lhrTime = ZonedDateTime.now(lhrTimeZone)
+        val cdgTime = ZonedDateTime.now(cdgTimeZone)
+        val istTime = ZonedDateTime.now(istTimeZone)
+        val sfoTime = ZonedDateTime.now(sfoTimeZone)
+        val hnlTime = ZonedDateTime.now(hnlTimeZone)
+        val sinTime = ZonedDateTime.now(sinTimeZone)
+        val nrtTime = ZonedDateTime.now(nrtTimeZone)
+        val sydTime = ZonedDateTime.now(sydTimeZone)
+        Log.i("IAD time = ", nycTime.hour.toString())
+        Log.i("LHR time = ", lhrTime.hour.toString())
+        Log.i("CDG time = ", cdgTime.hour.toString())
+        Log.i("IST time = ", istTime.hour.toString())
+        Log.i("SFO time = ", sfoTime.hour.toString())
+        Log.i("HNL time = ", hnlTime.hour.toString())
+        Log.i("SIN time = ", sinTime.hour.toString())
+        Log.i("NRT time = ", nrtTime.hour.toString())
+        Log.i("SYD time = ", sydTime.hour.toString())
+
         xHandSec = old_minToLocation(currentSecond, secondHandLength, WIDTH, HEIGHT).x
         yHandSec = old_minToLocation(currentSecond, secondHandLength, WIDTH, HEIGHT).y
         xHandMin = old_minToLocation(currentMinute, minuteHandLength, WIDTH, HEIGHT).x
@@ -102,21 +146,39 @@ class Clock(context: Context?) : View(context) {
         xHandLocation = minToLocation(currentHour * 3 + relativeHour, locationHandLength, WIDTH, HEIGHT).x
         yHandLocation = minToLocation(currentHour * 3 + relativeHour, locationHandLength, WIDTH, HEIGHT).y
 
-        xHandHourLHR = minToLocation(((currentHour + 5) % 24) * 3 + relativeHour, secondHandLength, WIDTH, HEIGHT).x
-        yHandHourLHR = minToLocation(((currentHour + 5) % 24) * 3 + relativeHour, secondHandLength, WIDTH, HEIGHT).y
+        xHandHourNYC = minToLocation(nycTime.hour * 3 + relativeHour, secondHandLength, WIDTH, HEIGHT).x
+        yHandHourNYC = minToLocation(nycTime.hour * 3 + relativeHour, secondHandLength, WIDTH, HEIGHT).y
 
-        xHandHourSFO = minToLocation(((if (currentHour < 3)  24 + currentHour else currentHour) - 3) * 3 + relativeHour, secondHandLength, WIDTH, HEIGHT).x
-        yHandHourSFO = minToLocation(((if (currentHour < 3)  24 + currentHour else currentHour) - 3) * 3 + relativeHour, secondHandLength, WIDTH, HEIGHT).y
+        xHandHourLHR = minToLocation(lhrTime.hour * 3 + relativeHour, secondHandLength, WIDTH, HEIGHT).x
+        yHandHourLHR = minToLocation(lhrTime.hour * 3 + relativeHour, secondHandLength, WIDTH, HEIGHT).y
 
-        xHandHourSIN = minToLocation(((currentHour + 13) % 24) * 3 + relativeHour, secondHandLength, WIDTH, HEIGHT).x
-        yHandHourSIN = minToLocation(((currentHour + 13) % 24) * 3 + relativeHour, secondHandLength, WIDTH, HEIGHT).y
+        xHandHourCDG = minToLocation(cdgTime.hour * 3 + relativeHour, secondHandLength, WIDTH, HEIGHT).x
+        yHandHourCDG = minToLocation(cdgTime.hour * 3 + relativeHour, secondHandLength, WIDTH, HEIGHT).y
+
+        xHandHourIST = minToLocation(istTime.hour * 3 + relativeHour, secondHandLength, WIDTH, HEIGHT).x
+        yHandHourIST = minToLocation(istTime.hour * 3 + relativeHour, secondHandLength, WIDTH, HEIGHT).y
+
+        xHandHourSFO = minToLocation(sfoTime.hour * 3 + relativeHour, secondHandLength, WIDTH, HEIGHT).x
+        yHandHourSFO = minToLocation(sfoTime.hour * 3 + relativeHour, secondHandLength, WIDTH, HEIGHT).y
+
+        xHandHourSIN = minToLocation(sinTime.hour * 3 + relativeHour, secondHandLength, WIDTH, HEIGHT).x
+        yHandHourSIN = minToLocation(sinTime.hour * 3 + relativeHour, secondHandLength, WIDTH, HEIGHT).y
+
+        xHandHourNRT = minToLocation(nrtTime.hour * 3 + relativeHour, secondHandLength, WIDTH, HEIGHT).x
+        yHandHourNRT = minToLocation(nrtTime.hour * 3 + relativeHour, secondHandLength, WIDTH, HEIGHT).y
+
+        xHandHourSYD = minToLocation(sydTime.hour * 3 + relativeHour, secondHandLength, WIDTH, HEIGHT).x
+        yHandHourSYD = minToLocation(sydTime.hour * 3 + relativeHour, secondHandLength, WIDTH, HEIGHT).y
+
+        xHandHourHNL = minToLocation(hnlTime.hour * 3 + relativeHour, secondHandLength, WIDTH, HEIGHT).x
+        yHandHourHNL = minToLocation(hnlTime.hour * 3 + relativeHour, secondHandLength, WIDTH, HEIGHT).y
 
         val availW = mRight - mLeft
         val availH = mBottom - mTop
 
         val wScale = availW.div(WIDTH)
         val hScale = availH.div(HEIGHT)
-        val scale = Math.min(wScale,hScale)
+        val scale = Math.min(wScale, hScale)
         SCALE = scale.toFloat()
 
         val cX = availW / 2
@@ -228,8 +290,8 @@ class Clock(context: Context?) : View(context) {
         paint.isFakeBoldText = true
         canvas.drawText(
             "IAD",
-            xHandHour.toFloat(),
-            yHandHour.toFloat() - ((paint.descent() + paint.ascent()) / 2),
+            xHandHourNYC.toFloat(),
+            yHandHourNYC.toFloat() - ((paint.descent() + paint.ascent()) / 2),
             paint)
         canvas.drawText(
             "LHR",
@@ -245,6 +307,31 @@ class Clock(context: Context?) : View(context) {
             "SIN",
             xHandHourSIN.toFloat(),
             yHandHourSIN.toFloat() - ((paint.descent() + paint.ascent()) / 2),
+            paint)
+        canvas.drawText(
+            "HNL",
+            xHandHourHNL.toFloat(),
+            yHandHourHNL.toFloat() - ((paint.descent() + paint.ascent()) / 2),
+            paint)
+        canvas.drawText(
+            "SYD",
+            xHandHourSYD.toFloat(),
+            yHandHourSYD.toFloat() - ((paint.descent() + paint.ascent()) / 2),
+            paint)
+        canvas.drawText(
+            "NRT",
+            xHandHourNRT.toFloat(),
+            yHandHourNRT.toFloat() - ((paint.descent() + paint.ascent()) / 2),
+            paint)
+        canvas.drawText(
+            "CDG",
+            xHandHourCDG.toFloat(),
+            yHandHourCDG.toFloat() - ((paint.descent() + paint.ascent()) / 2),
+            paint)
+        canvas.drawText(
+            "IST",
+            xHandHourIST.toFloat(),
+            yHandHourIST.toFloat() - ((paint.descent() + paint.ascent()) / 2),
             paint)
 
         // Draw the dots
@@ -284,23 +371,29 @@ class Clock(context: Context?) : View(context) {
         //Draw clock second hands
         if(showSecond) {
             paint.color = Color.WHITE
-            canvas.drawCircle((xHandSec - DIAMETER_SECOND_DOT.times(SCALE) / 2)
-                , (yHandSec - DIAMETER_SECOND_DOT.times(SCALE) / 2)
-                , (DIAMETER_SECOND_DOT.times(SCALE) + 2)
-                , paint)
+            canvas.drawCircle((xHandSec - DIAMETER_SECOND_DOT.times(SCALE) / 2), (yHandSec - DIAMETER_SECOND_DOT.times(SCALE) / 2), (DIAMETER_SECOND_DOT.times(SCALE) + 2), paint)
             paint.color = secondDotColor
-            canvas.drawCircle((xHandSec - DIAMETER_SECOND_DOT.times(SCALE) / 2)
-                , (yHandSec - DIAMETER_SECOND_DOT.times(SCALE) / 2)
-                , DIAMETER_SECOND_DOT.times(SCALE)
-                , paint)
+            canvas.drawCircle((xHandSec - DIAMETER_SECOND_DOT.times(SCALE) / 2), (yHandSec - DIAMETER_SECOND_DOT.times(SCALE) / 2), DIAMETER_SECOND_DOT.times(SCALE), paint)
         }
 
         if(showLocation) {
-            paint.color = locationDotColor
-            canvas.drawCircle(xHandLocation.toFloat()
-                , yHandLocation.toFloat() - ((paint.descent() + paint.ascent()) / 2)
-                , DIAMETER_LOCATION_DOT.times(SCALE)
-                , paint)
+            if(currentHour >= 6 && currentHour < 18) {
+                paint.color = locationDotColor
+                canvas.drawCircle(xHandLocation.toFloat(), yHandLocation.toFloat() - ((paint.descent() + paint.ascent()) / 2), DIAMETER_LOCATION_DOT.times(SCALE), paint)
+                paint.color = Color.rgb(255, 165, 0)
+                canvas.drawCircle(xHandLocation.toFloat(), yHandLocation.toFloat() - ((paint.descent() + paint.ascent()) / 2), (DIAMETER_LOCATION_DOT - 5).times(SCALE), paint)
+            } else {
+                paint.color = Color.WHITE
+                canvas.drawCircle(xHandLocation.toFloat(), yHandLocation.toFloat() - ((paint.descent() + paint.ascent()) / 2), DIAMETER_LOCATION_DOT.times(SCALE), paint)
+                paint.color = Color.GRAY
+                canvas.drawCircle(xHandLocation.toFloat() + 4f, yHandLocation.toFloat() - ((paint.descent() + paint.ascent()) / 2), (DIAMETER_LOCATION_DOT - 4).times(SCALE), paint)
+            }
+            //val bmp = BitmapFactory.decodeResource(context.resources, R.drawable.ic_sun)
+            //val scaledBmp = Bitmap.createScaledBitmap(bmp, 100, 100, true);
+            //canvas.drawBitmap(scaledBmp,
+            //    xHandLocation.toFloat(),
+            //    yHandLocation.toFloat() - ((paint.descent() + paint.ascent()) / 2),
+            //    paint)
         }
 
         //Draw center circle
@@ -348,16 +441,16 @@ class Clock(context: Context?) : View(context) {
             }
         }
 
-        val xDegree = if(xIsPos) Math.cos(t).absoluteValue.pow(11.0/11)
-        else Math.cos(t).absoluteValue.pow(11.0/11).times(-1)
+        val xDegree = if(xIsPos) Math.cos(t).absoluteValue.pow(11.0 / 11)
+        else Math.cos(t).absoluteValue.pow(11.0 / 11).times(-1)
 
-        val yDegree = - if(yIsPos) Math.sin(t).absoluteValue.pow(11.0/11)
-        else Math.sin(t).absoluteValue.pow(11.0/11).times(-1)
+        val yDegree = - if(yIsPos) Math.sin(t).absoluteValue.pow(11.0 / 11)
+        else Math.sin(t).absoluteValue.pow(11.0 / 11).times(-1)
 
         val x = (width.times(SCALE) / 2 + radius.times(SCALE) * xDegree)
         val y = (height.times(SCALE) / 2 + radius.times(SCALE) * yDegree)
 
-        return Point(x.toInt(),y.toInt())
+        return Point(x.toInt(), y.toInt())
     }
 
     private fun minToLocation(timeStep: Int, radius: Int, width: Int, height: Int): Point {
@@ -387,16 +480,16 @@ class Clock(context: Context?) : View(context) {
             }
         }
 
-        val xDegree = if(xIsPos) Math.cos(t).absoluteValue.pow(11.0/11)
-        else Math.cos(t).absoluteValue.pow(11.0/11).times(-1)
+        val xDegree = if(xIsPos) Math.cos(t).absoluteValue.pow(11.0 / 11)
+        else Math.cos(t).absoluteValue.pow(11.0 / 11).times(-1)
 
-        val yDegree = - if(yIsPos) Math.sin(t).absoluteValue.pow(11.0/11)
-        else Math.sin(t).absoluteValue.pow(11.0/11).times(-1)
+        val yDegree = - if(yIsPos) Math.sin(t).absoluteValue.pow(11.0 / 11)
+        else Math.sin(t).absoluteValue.pow(11.0 / 11).times(-1)
 
         val x = (width.times(SCALE) / 2 + radius.times(SCALE) * xDegree)
         val y = (height.times(SCALE) / 2 + radius.times(SCALE) * yDegree)
 
-        return Point(x.toInt(),y.toInt())
+        return Point(x.toInt(), y.toInt())
     }
 
     private fun to2Digit(number: Number): String {
